@@ -2,6 +2,80 @@
 
 fix to ubuntu 24.04
 
+修复Livox-SDK编译问题
+
+修复方案
+1. 统一C++标准设置
+确保所有子目录的CMakeLists.txt都显式设置C++标准为17，与主CMakeLists.txt保持一致
+修改以下文件：
+sample_cc/hub/CMakeLists.txt
+sample_cc/lidar/CMakeLists.txt
+sample_cc/trouble_shooting/CMakeLists.txt
+sample_cc/lidar_utc_sync/CMakeLists.txt
+2. 移除重复的pthread标志
+从sample_cc/lidar_utc_sync/CMakeLists.txt中移除重复的-pthread设置（第3-5行），因为主CMakeLists.txt已经设置了
+3. 优化子目录CMakeLists.txt配置
+为所有sample_cc子目录的CMakeLists.txt添加CMAKE_CXX_STANDARD设置
+确保所有可执行目标正确链接到SDK库
+具体修改
+sample_cc/hub/CMakeLists.txt
+添加C++标准设置：
+
+cmake_minimum_required(VERSION 3.0)
+
+set(CMAKE_CXX_STANDARD 17)
+
+set(DEMO_NAME hub_sample_cc)
+add_executable(${DEMO_NAME} lds_hub.cpp main.cpp)
+
+target_link_libraries(${DEMO_NAME}
+        PRIVATE
+        ${PROJECT_NAME}_static
+        )
+sample_cc/lidar/CMakeLists.txt
+添加C++标准设置：
+
+cmake_minimum_required(VERSION 3.0)
+
+set(CMAKE_CXX_STANDARD 17)
+
+set(DEMO_NAME lidar_sample_cc)
+add_executable(${DEMO_NAME} main.cpp lds_lidar.cpp)
+
+target_link_libraries(${DEMO_NAME}
+        PRIVATE
+        ${PROJECT_NAME}_static
+        )
+sample_cc/trouble_shooting/CMakeLists.txt
+添加C++标准设置：
+
+cmake_minimum_required(VERSION 3.0)
+
+set(CMAKE_CXX_STANDARD 17)
+
+set(DEMO_NAME trouble_shooting)
+add_executable(${DEMO_NAME} main.cpp)
+
+target_link_libraries(${DEMO_NAME}
+        PRIVATE
+        ${PROJECT_NAME}_static
+        )
+sample_cc/lidar_utc_sync/CMakeLists.txt
+移除重复的pthread设置，添加C++标准设置：
+
+cmake_minimum_required(VERSION 3.0)
+
+set(CMAKE_CXX_STANDARD 17)
+
+set(DEMO_NAME lidar_utc_sync)
+add_executable(${DEMO_NAME} main.cpp lds_lidar.cpp synchro.cpp)
+
+target_link_libraries(${DEMO_NAME}
+        PRIVATE
+        ${PROJECT_NAME}_static
+        )
+
+
 # 1 Introduction
 
 Livox SDK is the software development kit designed for all Livox products. It is developed based on C/C++ following Livox SDK Communication Protocol, and provides easy-to-use C style API. With Livox SDK, users can quickly connect to Livox products and receive point cloud data. 
