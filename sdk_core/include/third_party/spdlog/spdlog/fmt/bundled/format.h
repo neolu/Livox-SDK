@@ -402,12 +402,13 @@ void basic_buffer<T>::append(const U *begin, const U *end) {
 
 // C++20 feature test, since r346892 Clang considers char8_t a fundamental
 // type in this mode. If this is the case __cpp_char8_t will be defined.
-#if !defined(__cpp_char8_t)
+#if !defined(__cpp_char8_t) && __cplusplus < 202002L
 // A UTF-8 code unit type.
 enum char8_t: unsigned char {};
 #endif
 
 // A UTF-8 string view.
+#if __cplusplus >= 202002L || defined(__cpp_char8_t) || (__cplusplus >= 201703L && !defined(__cpp_char8_t))
 class u8string_view : public basic_string_view<char8_t> {
  public:
   typedef char8_t char_type;
@@ -424,6 +425,7 @@ inline u8string_view operator"" _u(const char *s, std::size_t n) {
   return {s, n};
 }
 }
+#endif
 #endif
 
 // The number of characters to store in the basic_memory_buffer object itself
@@ -788,6 +790,10 @@ inline int count_digits(uint64_t n) {
     count += 4;
   }
 }
+#endif
+
+#if __cplusplus >= 202002L
+#define FMT_DEPRECATED_CPP20
 #endif
 
 template <typename Char>
