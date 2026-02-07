@@ -1,6 +1,6 @@
 [中文版本使用说明](<https://github.com/Livox-SDK/Livox-SDK/blob/master/README_CN.md>)
 
-fix to ubuntu 24.04
+fix to ubuntu 22.04 24.04
 
 修复Livox-SDK编译问题
 
